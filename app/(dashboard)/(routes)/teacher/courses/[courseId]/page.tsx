@@ -7,7 +7,7 @@ import { IconBadge } from "@/components/icon-badge";
 // import { Banner } from "@/components/banner";
 
 import { TitleForm } from "./_components/title-form";
-// import { DescriptionForm } from "./_components/description-form";
+import { DescriptionForm } from "./_components/description-form";
 // import { ImageForm } from "./_components/image-form";
 // import { CategoryForm } from "./_components/category-form";
 // import { PriceForm } from "./_components/price-form";
@@ -106,11 +106,11 @@ const CourseIdPage = async ({
               initialData={course}
               courseId={course.id}
             />
-            {/* <DescriptionForm
-              initialData={course}
+             <DescriptionForm
+            //   initialData={course}
               courseId={course.id}
             />
-            <ImageForm
+            {/*<ImageForm
               initialData={course}
               courseId={course.id}
             />
