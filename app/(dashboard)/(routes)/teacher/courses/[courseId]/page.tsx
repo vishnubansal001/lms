@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { IconBadge } from "@/components/icon-badge";
 // import { Banner } from "@/components/banner";
 
-// import { TitleForm } from "./_components/title-form";
+import { TitleForm } from "./_components/title-form";
 // import { DescriptionForm } from "./_components/description-form";
 // import { ImageForm } from "./_components/image-form";
 // import { CategoryForm } from "./_components/category-form";
@@ -102,11 +102,11 @@ const CourseIdPage = async ({
                 Customize your course
               </h2>
             </div>
-            {/* <TitleForm
+            <TitleForm
               initialData={course}
               courseId={course.id}
             />
-            <DescriptionForm
+            {/* <DescriptionForm
               initialData={course}
               courseId={course.id}
             />
