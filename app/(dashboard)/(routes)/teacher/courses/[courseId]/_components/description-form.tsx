@@ -8,7 +8,7 @@ import { Pencil } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-// import { Course } from "@prisma/client";
+import { Course } from "@prisma/client";
 
 import {
   Form,
@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 
 interface DescriptionFormProps {
-//   initialData: Course;
+  initialData: Course;
   courseId: string;
 };
 
@@ -33,7 +33,7 @@ const formSchema = z.object({
 });
 
 export const DescriptionForm = ({
-//   initialData,
+  initialData,
   courseId
 }: DescriptionFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -45,7 +45,7 @@ export const DescriptionForm = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-    //   description: initialData?.description || ""
+      description: initialData?.description || ""
     },
   });
 
@@ -80,9 +80,9 @@ export const DescriptionForm = ({
       {!isEditing && (
         <p className={cn(
           "text-sm mt-2",
-        //   !initialData.description && "text-slate-500 italic"
+          !initialData.description && "text-slate-500 italic"
         )}>
-          {/* {initialData.description || "No description"} */}
+          {initialData.description || "No description"}
         </p>
       )}
       {isEditing && (
