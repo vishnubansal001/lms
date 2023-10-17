@@ -1,13 +1,22 @@
-// import Mux from "@mux/mux-node";
+import Mux from "@mux/mux-node";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-
+import cloudinary from "cloudinary";
 import { db } from "@/lib/db";
+import fs from "fs";
+import file from "@/public/logo.svg";
+import { createCanvas, loadImage } from "canvas";
 
-// const { Video } = new Mux(
-//   process.env.MUX_TOKEN_ID!,
-//   process.env.MUX_TOKEN_SECRET!,
-// );
+const { Video } = new Mux(
+  process.env.MUX_TOKEN_ID!,
+  process.env.MUX_TOKEN_SECRET!
+);
+
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_KEY,
+  api_secret: process.env.CLOUD_SECRET,
+});
 
 export async function DELETE(
   req: Request,
@@ -29,20 +38,20 @@ export async function DELETE(
         chapters: {
           include: {
             muxData: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
     if (!course) {
       return new NextResponse("Not found", { status: 404 });
     }
 
-    // for (const chapter of course.chapters) {
-    //   if (chapter.muxData?.assetId) {
-    //     await Video.Assets.del(chapter.muxData.assetId);
-    //   }
-    // }
+    for (const chapter of course.chapters) {
+      if (chapter.muxData?.assetId) {
+        await Video.Assets.del(chapter.muxData.assetId);
+      }
+    }
 
     const deletedCourse = await db.course.delete({
       where: {
@@ -70,14 +79,66 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    if (values?.isBadge === true) {
+      const canvas = createCanvas(300, 150);
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#FFD700";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.font = "24px Arial";
+      ctx.fillStyle = "#000000";
+      ctx.fillText("Badge", 50, 75);
+      const base64Image = canvas.toDataURL("image/png");
+
+      cloudinary.v2.uploader.upload(
+        base64Image,
+        { folder: "uploads" },
+        async (error, result) => {
+          if (error) {
+            console.error("Error uploading image:", error);
+          } else {
+            const url = result?.secure_url;
+            console.log("Image uploaded successfully:", url);
+            const badge = await db.badge.create({
+              data: {
+                imageUrl: url || "",
+                courseId: courseId, // Assuming courseId is available
+              },
+            });
+
+            // Update the course to associate it with the badge
+            await db.course.update({
+              where: { id: courseId },
+              data: { isBadge: true, badgeId: badge.id },
+            });
+            console.log("badge created");
+          }
+        }
+      );
+    } else if (values?.isBadge === false) {
+      const badge = await db.badge.findUnique({
+        where: { courseId: courseId },
+      });
+      if (badge) {
+        // Delete the badge entry
+        await db.badge.delete({ where: { id: badge.id } });
+
+        // Disassociate the course from the badge
+        await db.course.update({
+          where: { id: courseId },
+          data: { isBadge: false, badgeId: null },
+        });
+        console.log("badge deleted");
+      }
+    }
     const course = await db.course.update({
       where: {
         id: courseId,
-        userId
+        userId,
       },
       data: {
         ...values,
-      }
+      },
     });
 
     return NextResponse.json(course);

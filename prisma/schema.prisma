@@ -17,6 +17,9 @@ model Course {
   imageUrl String? @db.Text
   price Float?
   isPublished Boolean @default(false)
+  isBadge Boolean @default(false)
+  badgeId String? @unique
+  badge Badge? @relation(fields: [badgeId], references: [id])
 
   categoryId String?
   category Category? @relation(fields: [categoryId], references: [id])
@@ -30,6 +33,26 @@ model Course {
 
   @@index([categoryId])
   @@fulltext([title])
+}
+
+model Badge{
+  id String @id @default(uuid())
+  imageUrl String @db.Text
+  courseId String? @unique
+  course Course?
+  earnedBy ClerkUserBadge[]
+}
+
+model ClerkUserBadge {
+  id String @id @default(uuid())
+  userId String
+  badgeId String
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([badgeId])
 }
 
 model Category {
