@@ -102,11 +102,10 @@ export async function PATCH(
             const badge = await db.badge.create({
               data: {
                 imageUrl: url || "",
-                courseId: courseId, // Assuming courseId is available
+                courseId: courseId,
               },
             });
 
-            // Update the course to associate it with the badge
             await db.course.update({
               where: { id: courseId },
               data: { isBadge: true, badgeId: badge.id },
@@ -120,10 +119,8 @@ export async function PATCH(
         where: { courseId: courseId },
       });
       if (badge) {
-        // Delete the badge entry
         await db.badge.delete({ where: { id: badge.id } });
-
-        // Disassociate the course from the badge
+        
         await db.course.update({
           where: { id: courseId },
           data: { isBadge: false, badgeId: null },
