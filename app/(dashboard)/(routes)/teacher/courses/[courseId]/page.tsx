@@ -15,6 +15,8 @@ import { AttachmentForm } from "./_components/attachment-form";
 import { ChaptersForm } from "./_components/chapters-form";
 import { Actions } from "./_components/actions";
 import { BadgeForm } from "./_components/badge-form";
+import { TestForm } from "./_components/test-form";
+import { CertificateForm } from "./_components/certificate-form";
 
 const CourseIdPage = async ({
   params
@@ -169,6 +171,30 @@ const CourseIdPage = async ({
                 </h2>
               </div>
               <BadgeForm
+                initialData={course}
+                courseId={course.id}
+              />
+            </div>
+            <div>
+              <div className="flex items-center gap-x-2">
+                {/* <IconBadge icon={File} /> */}
+                <h2 className="text-xl">
+                  Certificates
+                </h2>
+              </div>
+              <CertificateForm
+                initialData={course}
+                courseId={course.id}
+              />
+            </div>
+            <div>
+              <div className="flex items-center gap-x-2">
+                {/* <IconBadge icon={File} /> */}
+                <h2 className="text-xl">
+                  Tests
+                </h2>
+              </div>
+              <TestForm
                 initialData={course}
                 courseId={course.id}
               />
