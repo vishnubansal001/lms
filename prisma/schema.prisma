@@ -32,6 +32,7 @@ model Course {
   isTest Boolean @default(false)
   testId String? @unique
   test Test? @relation(fields: [testId], references: [id])
+  totalQuestions Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

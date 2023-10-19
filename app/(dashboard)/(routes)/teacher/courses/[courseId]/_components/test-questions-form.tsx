@@ -8,32 +8,33 @@ import { Pencil } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { Course } from "@prisma/client";
 
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
+  FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Course } from "@prisma/client";
+import { Input } from "@/components/ui/input";
+import { formatPrice } from "@/lib/format";
 
-interface CertificateFormProps {
+interface TestQuestionsFormProps {
   initialData: Course;
   courseId: string;
 };
 
 const formSchema = z.object({
-  isCertificate: z.boolean().default(false),
+  totalQuestions: z.coerce.number(),
 });
 
-export const CertificateForm = ({
+export const TestQuestionsForm = ({
   initialData,
-  courseId,
-}: CertificateFormProps) => {
+  courseId
+}: TestQuestionsFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const toggleEdit = () => setIsEditing((current) => !current);
@@ -43,7 +44,7 @@ export const CertificateForm = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      isCertificate: !!initialData.isBadge
+      totalQuestions: initialData?.totalQuestions || undefined,
     },
   });
 
@@ -63,14 +64,14 @@ export const CertificateForm = ({
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Course Certificate
+        Test Questions number 
         <Button onClick={toggleEdit} variant="ghost">
           {isEditing ? (
             <>Cancel</>
           ) : (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit Certificate
+              Edit number
             </>
           )}
         </Button>
@@ -78,13 +79,12 @@ export const CertificateForm = ({
       {!isEditing && (
         <p className={cn(
           "text-sm mt-2",
-          !initialData.isCertificate && "text-slate-500 italic"
+          !initialData.totalQuestions && "text-slate-500 italic"
         )}>
-          {initialData.isCertificate ? (
-            <>This course is having a certificate.</>
-          ) : (
-            <>This course is not having a certificate.</>
-          )}
+          {initialData.totalQuestions
+            ? formatPrice(initialData.totalQuestions)
+            : "No number"
+          }
         </p>
       )}
       {isEditing && (
@@ -95,20 +95,18 @@ export const CertificateForm = ({
           >
             <FormField
               control={form.control}
-              name="isCertificate"
+              name="totalQuestions"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormItem>
                   <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
+                    <Input
+                      type="number"
+                      disabled={isSubmitting}
+                      placeholder="Set a price for your course"
+                      {...field}
                     />
                   </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormDescription>
-                      Check this box if you want to make this course to provide certificate
-                    </FormDescription>
-                  </div>
+                  <FormMessage />
                 </FormItem>
               )}
             />
