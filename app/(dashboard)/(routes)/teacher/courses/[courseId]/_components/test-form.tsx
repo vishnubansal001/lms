@@ -51,6 +51,9 @@ export const TestForm = ({ initialData, courseId }: TestFormProps) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, values);
       toast.success("Course updated");
+      if(values?.isTest && values?.isTest===true){
+        router.push(`/teacher/courses/${courseId}/num`);
+      }
       toggleEdit();
       router.refresh();
     } catch {
@@ -123,9 +126,6 @@ export const TestForm = ({ initialData, courseId }: TestFormProps) => {
           </Form>
         )}
       </div>
-      {initialData.isTest && (
-        <TestQuestionsForm initialData={initialData} courseId={courseId} />
-      )}
     </>
   );
 };
