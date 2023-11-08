@@ -187,10 +187,10 @@ const CourseIdPage = async ({
                 courseId={course.id}
               />
             </div>
-            <div>
+            {/* <div>
               <div className="flex items-center gap-x-2">
                 {/* <IconBadge icon={File} /> */}
-                <h2 className="text-xl">
+                {/* <h2 className="text-xl">
                   Tests
                 </h2>
               </div>
@@ -198,7 +198,7 @@ const CourseIdPage = async ({
                 initialData={course}
                 courseId={course.id}
               />
-            </div>
+            </div> */} 
           </div>
         </div>
       </div>
